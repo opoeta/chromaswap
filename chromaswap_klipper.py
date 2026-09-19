@@ -4,6 +4,7 @@ import re
 
 DEFAULT_SERIES = 12  # the series chromaswap is developed and tested against
 # series -> {macro name: {variable: value}}, applied with SET_GCODE_VARIABLE on klippy:ready.
+# Values are pasted into SET_GCODE_VARIABLE VALUE=..., so strings need Jinja quotes: "'text'".
 # ponytail: empty until a real per-version difference is measured on the printer.
 PROFILES = {12: {}, 13: {}}
 

@@ -4,17 +4,16 @@
 [ -n "$ZMOD_SH" ] && . "$ZMOD_SH"
 
 NAME=chromaswap
-SOURCE_DIR="${MOD_CONF}/mod_data/plugins/${NAME}"
+MODULES="chromaswap_klipper"     # keep in sync with install.sh
 TARGET_DIRS="/usr/data/zmod/klipper/klippy/extras ${KLIPPER_DIR}/klippy/extras"
 
-for file in "$SOURCE_DIR"/*.py; do
-    [ -e "$file" ] || continue
+for mod in $MODULES; do
     for target in $TARGET_DIRS; do
-        [ -L "$target/$(basename "$file")" ] && rm "$target/$(basename "$file")"
+        [ -L "$target/$mod.py" ] && rm "$target/$mod.py" && echo "chromaswap: removed $target/$mod.py"
     done
 done
 
-sed -i "/plugins\/${NAME}\//d" "${MOD_CONF}/mod_data/plugins.cfg" 2>/dev/null
+[ -n "$MOD_CONF" ] && sed -i "/plugins\/${NAME}\//d" "${MOD_CONF}/mod_data/plugins.cfg" 2>/dev/null
 
 echo "chromaswap uninstalled"
 echo "FIRMWARE_RESTART" >"${PRINTER_FIFO:-/tmp/printer}"

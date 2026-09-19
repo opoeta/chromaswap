@@ -30,6 +30,19 @@ Only the Klipper-version detector and a test macro, so the install path can be v
    `chromaswap: Klipper v0.12.x-... (series 12), profile 12, known True`.
 4. Remove with `sh .../chromaswap/uninstall.sh`.
 
+Before step 2, confirm the paths on your printer (they come from Z-Mod's `0.sh`):
+```sh
+. /usr/data/zmod/zmod/.shell/0.sh; echo "MOD_CONF=$MOD_CONF KLIPPER_DIR=$KLIPPER_DIR"
+```
+The plugin must end up at `$MOD_CONF/mod_data/plugins/chromaswap/`.
+
+**Rollback if Klipper does not start** (include line or module path wrong): delete the
+`plugins/chromaswap/` line from `$MOD_CONF/mod_data/plugins.cfg` and run `FIRMWARE_RESTART`.
+
+**After updating the `.py`** use `REBOOT`, not `FIRMWARE_RESTART`: Klipper keeps already imported
+Python modules in the same process, so a restart does not reload them (same reason QuickSwap
+asks for a reboot after updates). First install is fine with `FIRMWARE_RESTART`.
+
 `ENABLE_PLUGIN name=chromaswap` will not work yet: Z-Mod downloads plugins from its own list,
 and this one is not in it.
 
