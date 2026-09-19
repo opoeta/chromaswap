@@ -14,7 +14,17 @@ Only the Klipper-version detector and a test macro, so the install path can be v
 - `install.sh` / `uninstall.sh` — link the extra into Klipper, add the include, restart Klipper.
 - `lib/klipper_version.sh` — `klipper_series` shell function (asks Moonraker).
 
-## Test on the printer
+## Install from GitHub (once the repo is published)
+
+SSH into the printer and run:
+```sh
+curl -fsSL https://raw.githubusercontent.com/opoeta/chromaswap/main/get.sh | sh
+```
+It clones the repo into `$MOD_CONF/mod_data/plugins/chromaswap` (tarball fallback if `git` is
+missing), then runs `install.sh`. Pin a version with `CHROMASWAP_REF=<tag or commit>`. Piping
+a script into `sh` runs whatever is on `main`: pin a tag once you have released one.
+
+## Test on the printer (manual, from a tarball)
 
 1. Build the package on the PC: `sh package.sh` -> `dist/chromaswap.tar.gz`.
 2. Copy it to the printer and unpack into the plugins folder (`/opt/config/mod_data/plugins/`
