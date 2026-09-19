@@ -58,6 +58,7 @@ One Z-Mod plugin for the Flashforge AD5X that combines:
 - Backup channels / virtual channels (lessWaste) vs QuickSwap's own `_qs_get_switchover` mapping — must be one mechanism, not two.
 - QuickSwap's calibrations write to `filament.json` by hand; bambufy uses its own `_IFS_VARS` timings — pick one source of truth per value.
 - Compatibility floor inherited from QuickSwap: Z-Mod ≥ 1.7.3-79, Klipper 12.
+- **Klipper 13:** QuickSwap says only "not tested" (no commit or code mentions a break). Checked upstream Klipper v0.12.0 vs v0.13.0: every Klipper API `quickswap.py` uses (`gcode_handlers`, `register_command`, `run_script_from_command`, `toolhead.max_velocity`, `get_kinematics().max_z_velocity`, `gcode_move.get_status`) is unchanged, and its command names pass v0.13's new name validation. Real risks are elsewhere: (a) private Z-Mod attributes it pokes (`zmod_ifs._command`, `_command_id`, `_command_lock`); (b) timing — lessWaste recommends Klipper 12 to avoid "timer too close", and QuickSwap's async IFS + parallel moves are timing-sensitive; (c) Z-Mod's Klipper 13 build may differ from upstream v0.13.0 (not checked). Default: target Klipper 12; treat 13 as a Phase 2 test item.
 
 **Phase 2 delivery includes** a hardware test plan for the user: calibrations first, then a short multi-color print with few swaps, comparing swap time with the Phase 1 baseline.
 
