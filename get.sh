@@ -16,16 +16,22 @@ URL="${CHROMASWAP_URL:-https://github.com/$REPO}"    # CHROMASWAP_URL: tests / f
 DEST="$MOD_CONF/mod_data/plugins/chromaswap"
 TMP="$DEST.new"; rm -rf "$TMP"
 
+# Try each downloader in turn; a tool that exists but is broken (e.g. curl without libcurl) is skipped.
+fetched=0
 if command -v git >/dev/null 2>&1; then
-    git clone -q --depth 1 --branch "$REF" "$URL.git" "$TMP" 2>/dev/null || git clone -q --depth 1 --branch "$REF" "$URL" "$TMP" \
-        || { echo "chromaswap: git clone of $URL ($REF) failed"; rm -rf "$TMP"; exit 1; }
-else
-    mkdir -p "$TMP" || exit 1
-    tarball="$URL/archive/$REF.tar.gz"
-    { if command -v curl >/dev/null 2>&1; then curl -fsSL --max-time 60 "$tarball"; else wget -qO- "$tarball"; fi; } \
-        | tar xz -C "$TMP" --strip-components=1 \
-        || { echo "chromaswap: download of $tarball failed"; rm -rf "$TMP"; exit 1; }
+    git clone -q --depth 1 --branch "$REF" "$URL.git" "$TMP" 2>/dev/null         || git clone -q --depth 1 --branch "$REF" "$URL" "$TMP" 2>/dev/null && fetched=1
+    [ "$fetched" = 1 ] || { echo "chromaswap: git clone failed, trying tarball"; rm -rf "$TMP"; }
 fi
+if [ "$fetched" = 0 ]; then
+    tarball="$URL/archive/$REF.tar.gz"
+    for dl in "curl -fsSL --max-time 60" "wget -qO-"; do
+        set -- $dl; command -v "$1" >/dev/null 2>&1 || continue
+        mkdir -p "$TMP" && $dl "$tarball" 2>/dev/null | tar xz -C "$TMP" --strip-components=1 2>/dev/null             && [ -f "$TMP/install.sh" ] && { fetched=1; break; }
+        echo "chromaswap: $1 could not fetch $tarball"; rm -rf "$TMP"
+    done
+fi
+[ "$fetched" = 1 ] || { echo "chromaswap: could not download $URL ($REF) with git, curl or wget."
+    echo "Copy the release tarball to the printer by hand instead (see README, 'manual')."; exit 1; }
 [ -f "$TMP/install.sh" ] && [ -f "$TMP/chromaswap.cfg" ] || { echo "chromaswap: downloaded content looks wrong, aborting"; rm -rf "$TMP"; exit 1; }
 
 rm -rf "$DEST" && mv "$TMP" "$DEST" && cd "$DEST" && exec sh ./install.sh

@@ -20,8 +20,7 @@ SSH into the printer and run:
 ```sh
 curl -fsSL https://raw.githubusercontent.com/opoeta/chromaswap/main/get.sh | sh
 ```
-It clones the repo into `$MOD_CONF/mod_data/plugins/chromaswap` (tarball fallback if `git` is
-missing), then runs `install.sh`. Pin a version with `CHROMASWAP_REF=<tag or commit>`. Piping
+It tries `git`, then `curl`, then `wget` (a tool that exists but is broken is skipped). It clones the repo into `$MOD_CONF/mod_data/plugins/chromaswap` (tarball fallback), then runs `install.sh`. Pin a version with `CHROMASWAP_REF=<tag or commit>`. Piping
 a script into `sh` runs whatever is on `main`: pin a tag once you have released one.
 
 ## Test on the printer (manual, from a tarball)
