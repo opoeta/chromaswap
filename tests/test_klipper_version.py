@@ -1,5 +1,5 @@
 import importlib.util, pathlib, sys
-p = pathlib.Path(__file__).parent.parent / 'klippy_extras' / 'chromaswap_klipper.py'
+p = pathlib.Path(__file__).parent.parent / 'chromaswap_klipper.py'
 spec = importlib.util.spec_from_file_location('ck', p); ck = importlib.util.module_from_spec(spec); spec.loader.exec_module(ck)
 
 assert ck.parse_series('v0.12.0-45-gabc123') == 12
